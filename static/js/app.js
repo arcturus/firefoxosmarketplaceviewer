@@ -88,6 +88,9 @@ var AppController = function AppController() {
       if (app.extra && app.extra.enhanced && app.extra.enhanced.app_cache_defined) {
         var appcache_defined = $('<button class="btn btn-info">With app cache defined</button>');
         thumb.append(appcache_defined);
+      } else if (app.extra && app.extra.enhanced && app.extra.enhanced.uses_appcache) {
+        var using_appcache = $('<button class="btn btn-danger">App cache not defined but used</button>');
+        thumb.append(using_appcache);
       }
 
       li.append(thumb);
@@ -218,9 +221,35 @@ var AppController = function AppController() {
 
     offlineArea.append(progressOffline);
 
+    var appCacheArea = $('#hosted_appcache_area');
+    var totalHostedOnline = stats.without_appcache_defined;
+    var progressUsingAppCache = document.createElement('div');
+    progressUsingAppCache.classList.add('progress');
+
+    var progressCacheOff = document.createElement('div');
+    progressCacheOff.classList.add('bar');
+    progressCacheOff.classList.add('bar-warning');
+    progressCacheOff.style.width = Math.round((totalHostedOnline - 
+      stats.without_appcache_defined_using_appcache) * 100 / totalHostedOnline) + '%';
+    progressCacheOff.innerHTML = Math.round((stats.without_appcache_defined - 
+      stats.without_appcache_defined_using_appcache) * 100 / totalHostedOnline) + '%';
+    progressUsingAppCache.appendChild(progressCacheOff);
+
+    var progressCacheOn = document.createElement('div');
+    progressCacheOn.classList.add('bar');
+    progressCacheOn.classList.add('bar-success');
+    progressCacheOn.style.width = Math.round(stats.without_appcache_defined_using_appcache * 100 / 
+      totalHostedOnline) + '%';
+    progressCacheOn.innerHTML = Math.round(stats.without_appcache_defined_using_appcache * 100 / 
+      totalHostedOnline) + '%';
+    progressUsingAppCache.appendChild(progressCacheOn);
+
+    appCacheArea.append(progressUsingAppCache);
+
     div.show();
     hostedArea.show();
     offlineArea.show();
+    appCacheArea.show();
 
   };
 
