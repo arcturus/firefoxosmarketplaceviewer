@@ -6,6 +6,8 @@ var config = require('../config/config.js'),
 
 var EnhanceHosted = function EnhanceHosted() {
   var db = mongoq(config.get('mongo:url'), {safe: false});
+  var lookupAppCache = false;
+  var hasAppCache = new RegExp('<html.* manifest.*>', 'gi');
 
   var processManifest = function processManifest(manifestUrl, cb) {
     request(manifestUrl, function onBody(err, response, body) {
@@ -43,10 +45,43 @@ var EnhanceHosted = function EnhanceHosted() {
       };
 
       manifest.enhanced = enhanced;
-      cb(manifest);
+
+      if(lookupAppCache && !('appcache_path' in manifest)) {
+        getAppCache(manifest, cb);
+      } else {
+        cb(manifest);
+      }
 
     });
   };
+
+  var getAppCache = function getAppCache(manifest, cb) {
+    if (!manifest || !manifest.enhanced || !manifest.enhanced.launchPoint) {
+      console.log('Could not find the launch point for ' + manifest.name);
+      cb(manifest);
+      return;
+    }
+
+    var index = manifest.enhanced.launchPoint;
+    request({
+      'url': index,
+      'timeout': 5000
+    }, 
+      function onBody(err, response, body) {
+      if (err) {
+        console.log('Error fetching ' + index + ' ::: ' + err);
+        cb(manifest);
+        return;
+      }
+
+      var match = body.match(hasAppCache);
+      console.log(manifest.name + ' ' + (match ? 'has' : 'doesnt have') + ' app cache');
+      manifest.enhanced.uses_appcache = match != null;
+
+      cb(manifest);
+    });
+
+  }
 
   var getLaunchPoint = function getLaunchPoint(manifestUrl, manifest) {
     var launchPath = manifest.launch_path || '';
@@ -72,7 +107,8 @@ var EnhanceHosted = function EnhanceHosted() {
     });
   };
 
-  var enhanceAll = function enhanceAll() {
+  var enhanceAll = function enhanceAll(lac) {
+    lookupAppCache = lac;
     var apps = db.collection('apps');
     apps.find({'is_packaged': false}).toArray().done(function onApps(data) {
       if (!data) {
@@ -110,4 +146,4 @@ var EnhanceHosted = function EnhanceHosted() {
   };
 }();
 
-EnhanceHosted.enhanceAll();
+EnhanceHosted.enhanceAll(true);

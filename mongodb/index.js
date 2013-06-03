@@ -11,15 +11,18 @@ var MongoDB = function MongoDB() {
     .and(apps.find({'is_packaged': true}).count())
     .and(apps.find({'extra.enhanced.app_cache_defined': true}).count())
     .and(apps.find({'extra.enhanced.app_cache_defined': false}).count())
+    .and(apps.find({'extra.enhanced.uses_appcache': true}).count())
     .done(function(total, hosted, packaged,
-      with_appcache_defined, without_appcache_defined) {
+      with_appcache_defined, without_appcache_defined,
+      without_appcache_defined_using_appcache) {
         res.json({
           'total': total,
           'hosted': hosted,
           'packaged': packaged,
           'unknown': (total - hosted - packaged),
           'appcache_defined': with_appcache_defined,
-          'without_appcache_defined': without_appcache_defined
+          'without_appcache_defined': without_appcache_defined,
+          'without_appcache_defined_using_appcache': without_appcache_defined_using_appcache
         });
     })
     .fail(function(err) {
