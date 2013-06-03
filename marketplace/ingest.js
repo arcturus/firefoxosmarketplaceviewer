@@ -1,7 +1,7 @@
 var request = require('request');
 
 var MarketPlaceIngestor = function MarketPlaceIngestor() {
-  var BASE_URL = 'https://marketplace.firefox.com/api/v1/apps/search/?format=json&limit=100';
+  var BASE_URL = 'https://marketplace.firefox.com/api/v1/apps/search/?format=json&limit=100&device=firefoxos';
   var HOST = 'https://marketplace.firefox.com';
 
   var recursiveFetch = function recursiveFetch(url, apps, cb) {
