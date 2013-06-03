@@ -1,0 +1,31 @@
+{
+  "author": "Francisco Jordano <francisco@jordano.es> (http://www.ardeenelinfierno.com)",
+  "name": "firefoxosapps",
+  "description": "FirefoxOS Marketplace Analyzer",
+  "version": "0.0.1",
+  "private": true,
+  "homepage": "https://github.com/arcturus",
+  "repository": {
+    "url": "https://github.com/Francisco Jordano/firefoxosapps"
+  },
+  "scripts": {
+    "test": "tap ./test/*.js",
+    "start": "node ./lib/index.js"
+  },
+  "dependencies": {
+    "async": "~0.1.22",
+    "underscore": "~1.4.1",
+    "nconf": "0.6.7",
+    "express": "3.2.1",
+    "request": "2.21.0",
+    "mongoq": "*",
+    "futures": ">=2.1.0"
+  },
+  "devDependencies": {
+    "tap": "~0.3.1"
+  },
+  "optionalDependencies": {},
+  "engines": {
+    "node": ">=0.8.x"
+  }
+}

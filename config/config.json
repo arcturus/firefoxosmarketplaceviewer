@@ -1,0 +1,8 @@
+{
+  "mongo": {
+    "url": "mongodb://localhost:27017/marketplace"
+  },
+  "port": "80",
+  "static_dir": "static",
+  "version": "1.0.0"
+}
